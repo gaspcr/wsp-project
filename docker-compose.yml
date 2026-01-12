@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  backend:
+    image: laravelsail/php81-composer:latest
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+    env_file:
+      - ./backend/.env
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: api_whatsapp
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - mailhog
+    command: sh -c "composer install && php artisan serve --host 0.0.0.0 --port 8000"
+
+  frontend:
+    image: node:18
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install && npm run dev -- -H 0.0.0.0 -p 3000"
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: api_whatsapp
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  db_data:

@@ -1,5 +1,3 @@
-# Frontend - Curso WhatsApp API
-
 ## Build Setup
 
 ```bash
